@@ -1,9 +1,6 @@
 package com.example.CustomerApplication.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.LocalDate;
 
@@ -12,13 +9,17 @@ import java.time.LocalDate;
 public class Customer {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private Long id;
+
     private String firstName;
 
     private String lastName;
 
     private LocalDate birthDate;
 
-    public Customer(String firstName, String lastName, LocalDate birthDate) {
+    public Customer(Long id, String firstName, String lastName, LocalDate birthDate) {
+        this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
@@ -26,6 +27,14 @@ public class Customer {
 
     public Customer() {
 
+    }
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
     }
 
     public String getFirstName() {
@@ -55,10 +64,10 @@ public class Customer {
     @Override
     public String toString() {
         return "Customer{" +
-                "firstName='" + firstName + '\'' +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
                 ", birthDate=" + birthDate +
                 '}';
     }
-
 }
