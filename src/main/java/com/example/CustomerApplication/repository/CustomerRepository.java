@@ -13,7 +13,7 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByFirstName(String firstName);
     List<Customer> findByLastName(String lastName);
     List<Customer> findByBirthDate(LocalDate birthDate);
-
+    List<Customer> findByFirstNameOrLastName(String firstName, String lastName);
 
 
 }

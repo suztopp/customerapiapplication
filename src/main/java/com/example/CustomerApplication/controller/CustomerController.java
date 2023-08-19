@@ -22,8 +22,6 @@ public class CustomerController {
     @GetMapping("/getAllCustomers")
     public ResponseEntity<List<Customer>> getAllCustomers() {
         try {
-            //try to create a new list of customers, hitting the customer repo with findAll command
-            //return this response as a response entitle with OK if successful
             List<Customer> customerList = new ArrayList<>(customerRepository.findAll());
             if (customerList.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -45,7 +43,15 @@ public class CustomerController {
         }
     }
 
-    //    TODO getCustomerByName() - get by partial name first or last whichever is given
+    @GetMapping("/getCustomerByEitherName/{searchName}")
+    public ResponseEntity<List<Customer>> getCustomerByEitherName(@PathVariable String searchName) {
+        List<Customer> customerList = customerRepository.findByFirstNameOrLastName(searchName, searchName);
+        if (customerList.isEmpty()) {
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        } else {
+            return new ResponseEntity<>(customerList, HttpStatus.OK);
+        }
+    }
 
     @GetMapping("/getCustomerByFirstName/{firstName}")
     public ResponseEntity<List<Customer>> getCustomerByFirstName(@PathVariable String firstName) {
@@ -87,13 +93,23 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/updateCustomerById/{id}")
-    public void updateCustomerById(@PathVariable int id) {
-
+    @PostMapping("/updateCustomerById/{id}/{customerToUpdate}")
+    public ResponseEntity<Customer> updateCustomerById(@PathVariable Long id, @RequestBody Customer customerToUpdate) {
+        //retrieve existing customer - need to add error handling here - could add customer error messages if time permits?
+        Optional<Customer> customerSearched = customerRepository.findById(id);
+        Customer updatedCustomer = customerSearched.get();
+        //set new updated customer data
+        updatedCustomer.setFirstName(customerToUpdate.getFirstName());
+        updatedCustomer.setLastName(customerToUpdate.getLastName());
+        updatedCustomer.setBirthDate(customerToUpdate.getBirthDate());
+        //need to save the updated details against existing customer
+        Customer savedCustomer = customerRepository.save(updatedCustomer);
+        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
     }
 
     @DeleteMapping("/deleteCustomerById/{id}")
-    public void deleteCustomerById(@PathVariable int id) {
-
+    public void deleteCustomerById(@PathVariable Long id) {
+        Optional<Customer> customerSearched = customerRepository.findById(id);
+        //need to delete if they exist, but error if doesn't exist, will need an error message here
     }
 }
