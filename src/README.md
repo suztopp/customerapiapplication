@@ -11,6 +11,7 @@ Some **Limitations** to this current application
 Error Handling lacking for incorrect data being passed in
 More work needed on the updated customer data being passed in through endpoint
 Full customer object needs to be handed for updated customer
+If id already exists throw an error for updating or adding?
 
 ### PROBLEM
 

@@ -2,6 +2,7 @@ package com.example.CustomerApplication.controller;
 
 import com.example.CustomerApplication.model.Customer;
 import com.example.CustomerApplication.repository.CustomerRepository;
+import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -95,21 +97,42 @@ public class CustomerController {
 
     @PostMapping("/updateCustomerById/{id}/{customerToUpdate}")
     public ResponseEntity<Customer> updateCustomerById(@PathVariable Long id, @RequestBody Customer customerToUpdate) {
-        //retrieve existing customer - need to add error handling here - could add customer error messages if time permits?
-        Optional<Customer> customerSearched = customerRepository.findById(id);
-        Customer updatedCustomer = customerSearched.get();
-        //set new updated customer data
-        updatedCustomer.setFirstName(customerToUpdate.getFirstName());
-        updatedCustomer.setLastName(customerToUpdate.getLastName());
-        updatedCustomer.setBirthDate(customerToUpdate.getBirthDate());
-        //need to save the updated details against existing customer
-        Customer savedCustomer = customerRepository.save(updatedCustomer);
-        return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+        //retrieve existing customer - need to add error handling here - could add custom error messages if time permits?
+        try {
+            Optional<Customer> customerSearched = customerRepository.findById(id);
+            if (customerSearched.isPresent()) {
+                Customer updatedCustomer = customerSearched.get();
+                //set new updated customer data
+                updatedCustomer.setFirstName(customerToUpdate.getFirstName());
+                updatedCustomer.setLastName(customerToUpdate.getLastName());
+                updatedCustomer.setBirthDate(customerToUpdate.getBirthDate());
+                //need to save the updated details against existing customer
+                Customer savedCustomer = customerRepository.save(updatedCustomer);
+                return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+            } else {
+                return new ResponseEntity<>(customerToUpdate, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(customerToUpdate, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @DeleteMapping("/deleteCustomerById/{id}")
-    public void deleteCustomerById(@PathVariable Long id) {
-        Optional<Customer> customerSearched = customerRepository.findById(id);
+    public ResponseEntity<Customer> deleteCustomerById(@PathVariable Long id) {
         //need to delete if they exist, but error if doesn't exist, will need an error message here
+        try {
+            Optional<Customer> customerToDelete = customerRepository.findById(id);
+            if (customerToDelete.isPresent()) {
+//                customerRepository.delete(Objects.requireNonNull(customerToDelete.stream().findFirst().orElse(null)));
+                customerRepository.delete(customerToDelete.get());
+                return new ResponseEntity<>(customerToDelete.get(), HttpStatus.OK);
+            } else {
+                return new ResponseEntity<>(null, HttpStatus.NOT_FOUND);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 }
