@@ -3,6 +3,7 @@ package com.example.CustomerApplication;
 import com.example.CustomerApplication.controller.CustomerController;
 import com.example.CustomerApplication.model.Customer;
 import com.example.CustomerApplication.repository.CustomerRepository;
+import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -21,9 +22,6 @@ import java.util.*;
 @ExtendWith(SpringExtension.class)
 @WebMvcTest(value = CustomerController.class)
 public class CustomerControllerTest {
-
-//    @Autowired
-//    private MockMvc mockMvc;
 
     @Autowired
     private CustomerController controller;
@@ -67,6 +65,108 @@ public class CustomerControllerTest {
         Long testId = mockCustomer.getId();
 
         ResponseEntity<Optional<Customer>> response = controller.getCustomerById(testId);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetCustomerByFirstName() {
+        Mockito.when(repo.findByFirstName(Mockito.anyString())).thenReturn(Collections.singletonList(mockCustomerTwo));
+        String testFirstName = "Adele";
+
+        ResponseEntity<List<Customer>> response = controller.getCustomerByFirstName(testFirstName);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(mockCustomerTwo.getFirstName(), (Objects.requireNonNull(response.getBody()).get(0).getFirstName()));
+    }
+
+    @Test
+    public void testGetCustomerByFirstName_404_NOT_FOUND() {
+        Mockito.when(repo.findByFirstName(Mockito.anyString())).thenReturn(Collections.emptyList());
+        String testFirstName = "Suz";
+
+        ResponseEntity<List<Customer>> response = controller.getCustomerByFirstName(testFirstName);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetCustomerByLastName() {
+        Mockito.when(repo.findByLastName(Mockito.anyString())).thenReturn(Collections.singletonList(mockCustomerTwo));
+        String testLastName = "Hello";
+
+        ResponseEntity<List<Customer>> response = controller.getCustomerByLastName(testLastName);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(mockCustomerTwo.getLastName(), (Objects.requireNonNull(response.getBody()).get(0).getLastName()));
+    }
+
+    @Test
+    public void testGetCustomerByLastName_404_NOT_FOUND() {
+        Mockito.when(repo.findByLastName(Mockito.anyString())).thenReturn(Collections.emptyList());
+        String testLastName = "Topp";
+
+        ResponseEntity<List<Customer>> response = controller.getCustomerByLastName(testLastName);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testGetCustomerByEitherName() {
+        Mockito.when(repo.findByFirstNameOrLastName(Mockito.anyString(), Mockito.anyString())).thenReturn(Collections.singletonList(mockCustomerTwo));
+        String searchName = "Hello";
+
+        ResponseEntity<List<Customer>> response = controller.getCustomerByEitherName(searchName);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(mockCustomerTwo.getLastName(), (Objects.requireNonNull(response.getBody()).get(0).getLastName()));
+    }
+
+    @Test
+    public void testGetCustomerByEitherName_404_NOT_FOUND() {
+        Mockito.when(repo.findByFirstNameOrLastName(Mockito.anyString(), Mockito.anyString())).thenReturn(Collections.emptyList());
+        String searchName = "Topp";
+
+        ResponseEntity<List<Customer>> response = controller.getCustomerByEitherName(searchName);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateCustomerById() {
+        Mockito.when(repo.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockCustomer));
+        Mockito.when(repo.save(Mockito.any())).thenReturn(mockCustomerTwo); //returns updated new customer
+        Long testId = 1L;
+
+        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockCustomer);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+        Assertions.assertEquals(mockCustomerTwo.getFirstName(), (Objects.requireNonNull(response.getBody()).getFirstName()));
+    }
+
+    @Test
+    public void testUpdateCustomerById_404_ID_NOT_FOUND() {
+        Mockito.when(repo.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+        Long testId = 1L;
+
+        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockCustomer);
+        Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
+    }
+
+    @Test
+    public void testUpdateCustomerById_500_INTERNAL_SERVER_ERROR() {
+        Mockito.when(repo.findById(Mockito.anyLong())).thenThrow(HttpServerErrorException.InternalServerError.class);
+        Long testId = 1L;
+
+        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockCustomer);
+        Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteCustomerById() {
+        Mockito.when(repo.findById(Mockito.anyLong())).thenReturn(Optional.ofNullable(mockCustomer));
+        Long testId = 1L;
+        ResponseEntity<Customer> response = controller.deleteCustomerById(testId);
+        Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    @Test
+    public void testDeleteCustomerById_404_NOT_FOUND() {
+        Mockito.when(repo.findById(Mockito.anyLong())).thenReturn(Optional.empty());
+        Long testId = 1L;
+        ResponseEntity<Customer> response = controller.deleteCustomerById(testId);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 

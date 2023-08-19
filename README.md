@@ -2,8 +2,18 @@
 
 ## HOW TO RUN APPLICATION
 
-To access the Swagger Documentation for this application
+After Application is Running:
+
+To access the Swagger Documentation for this application go to:
 http://localhost:9092/swagger-ui/index.html
+
+To access the H2 database console go to:
+http://localhost:9092/h2
+Connect to testing database with credentials:
+Url: jdbc:h2:mem:testdb
+User: sa
+Password: password
+Once connected you will have access to the CUSTOMERS table and can see the pre loaded records. 
 
 When Application runs the Customers table is populated with some test customers.
 

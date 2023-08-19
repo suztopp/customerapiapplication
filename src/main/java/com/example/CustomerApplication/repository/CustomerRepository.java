@@ -15,5 +15,4 @@ public interface CustomerRepository extends JpaRepository<Customer, Long> {
     List<Customer> findByBirthDate(LocalDate birthDate);
     List<Customer> findByFirstNameOrLastName(String firstName, String lastName);
 
-
 }

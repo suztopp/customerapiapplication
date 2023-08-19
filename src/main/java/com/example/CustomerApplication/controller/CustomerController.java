@@ -2,16 +2,15 @@ package com.example.CustomerApplication.controller;
 
 import com.example.CustomerApplication.model.Customer;
 import com.example.CustomerApplication.repository.CustomerRepository;
-import org.hibernate.sql.exec.ExecutionException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.lang.NonNull;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
 
 @RestController
@@ -102,13 +101,11 @@ public class CustomerController {
             Optional<Customer> customerSearched = customerRepository.findById(id);
             if (customerSearched.isPresent()) {
                 Customer updatedCustomer = customerSearched.get();
-                //set new updated customer data
                 updatedCustomer.setFirstName(customerToUpdate.getFirstName());
                 updatedCustomer.setLastName(customerToUpdate.getLastName());
                 updatedCustomer.setBirthDate(customerToUpdate.getBirthDate());
-                //need to save the updated details against existing customer
                 Customer savedCustomer = customerRepository.save(updatedCustomer);
-                return new ResponseEntity<>(savedCustomer, HttpStatus.CREATED);
+                return new ResponseEntity<>(savedCustomer, HttpStatus.OK);
             } else {
                 return new ResponseEntity<>(customerToUpdate, HttpStatus.NOT_FOUND);
             }
@@ -119,12 +116,10 @@ public class CustomerController {
     }
 
     @DeleteMapping("/deleteCustomerById/{id}")
-    public ResponseEntity<Customer> deleteCustomerById(@PathVariable Long id) {
-        //need to delete if they exist, but error if doesn't exist, will need an error message here
+    public ResponseEntity<Customer> deleteCustomerById(@PathVariable @NonNull Long id) {
         try {
             Optional<Customer> customerToDelete = customerRepository.findById(id);
             if (customerToDelete.isPresent()) {
-//                customerRepository.delete(Objects.requireNonNull(customerToDelete.stream().findFirst().orElse(null)));
                 customerRepository.delete(customerToDelete.get());
                 return new ResponseEntity<>(customerToDelete.get(), HttpStatus.OK);
             } else {
