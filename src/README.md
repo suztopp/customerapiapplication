@@ -1,5 +1,14 @@
 ## CUSTOMER API APPLICATION
 
+## HOW TO RUN APPLICATION
+
+To access the Swagger Documentation for this application
+http://localhost:9092/swagger-ui/index.html
+
+When Application runs the Customers table is populated with some test customers.
+
+
+
 ### PROBLEM
 
 #### Build an API that allows the following:
@@ -39,4 +48,5 @@
 * Work out creating the first Customer record, and being able to retrieve that record
 * Work on swagger doc
 * Implement all methods needed for customer repository
-* Code cleanup
+* Unit Test Controller with Mockito
+* Final - Code cleanup
