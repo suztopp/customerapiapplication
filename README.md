@@ -20,15 +20,19 @@ more layers of functionality / error handling / response handling with more time
 You will need:
 
 Java 17
-Maven (if not using IntelliJ)
+Maven 
 
 Once repository is cloned, it's suggested to use INTELLIJ as the IDE when running the Customer Api Application.
 
-Open the project in your IDE, and run the following command:
+### Open the project in your IDE, and run the following command:
 
 mvn clean install
 
-To run the Unit Tests written for the application run the following command:
+### To run the application
+
+mvn spring-boot:run
+
+### To run the Unit Tests written for the application run the following command:
 
 mvn clean test
 
@@ -44,17 +48,18 @@ Connect to testing database with credentials: <br>
 Url: jdbc:h2:mem:testdb <br>
 User: sa <br>
 Password: password <br>
-Once connected you will have access to the CUSTOMERS table and can see the pre loaded records. 
+Once connected you will have access to the CUSTOMERS table and can see the preloaded records. 
 
 When Application runs the Customers table is populated with some test customers.
 
 Some **Limitations** to this current application: <br>
 Error Handling lacking for incorrect data types being passed in<br>
 More work needed on the updated customer data being passed in through endpoint<br>
-Full customer object needs to be handed for updated customer, would be better to have null possibilities for some of the fields?<br>
+Full customer object needs to be handed for updated customer, would be better to have null possibilities for some of the fields if only updating one name<br>
 If id already exists throw an error for updating or adding, currently updating over existing if you select an id<br>
-More testing for repo layer to add<br>
-Component Testing?
+Component Testing<br>
+Could simplify code, and add in a service layer, but first iteration focused on basic functionality<Br>
+I would have converted the classes to records in the professional environment, but kept them as POJOs for this project
 
 ### PROBLEM
 
@@ -66,7 +71,7 @@ Component Testing?
 * Searching for a customer by partial name match (first or last name)
 
 #### Tech Requirements
-* ASP.Net Core 5.1 API - Went with Java alternative
+* ASP.Net Core 5.1 API - Went with logical alternative
 * In memory entity framework store - using h2 database for the simplicity of the database calls and speed
 * Dependency injection - some dependency injections added
 * Basic Unit Tests - JUnit and Mockito used for unit testing controller layer
@@ -75,7 +80,7 @@ Component Testing?
 #### Notes
 * Code should build and run - Yes
 * Tests should pass - Yes
-* Coding standard should = good
+* Coding standard should be good
 * Design should be clean - I had originally added code comments, but cleaned up the code and added notes here where helpful
 
 #### Dependencies Added

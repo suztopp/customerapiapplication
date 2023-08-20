@@ -5,13 +5,10 @@ import java.time.LocalDate;
 public class CustomerDTO {
 
     String firstname;
-
     String lastName;
-
     LocalDate birthDate;
 
     public CustomerDTO() {
-
     }
 
     public CustomerDTO(String firstname, String lastName, LocalDate birthDate) {

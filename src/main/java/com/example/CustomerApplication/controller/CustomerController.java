@@ -3,7 +3,6 @@ package com.example.CustomerApplication.controller;
 import com.example.CustomerApplication.model.Customer;
 import com.example.CustomerApplication.model.CustomerDTO;
 import com.example.CustomerApplication.repository.CustomerRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.NonNull;
@@ -18,8 +17,11 @@ import java.util.Optional;
 @RequestMapping("/customerapi")
 public class CustomerController {
 
-    @Autowired
-    private CustomerRepository customerRepository;
+    private final CustomerRepository customerRepository;
+
+    public CustomerController(CustomerRepository customerRepository) {
+        this.customerRepository = customerRepository;
+    }
 
     @GetMapping("/getAllCustomers")
     public ResponseEntity<List<Customer>> getAllCustomers() {
@@ -30,7 +32,6 @@ public class CustomerController {
             }
             return new ResponseEntity<>(customerList, HttpStatus.OK);
         } catch (Exception e) {
-            //alternatively return an exception with a 500 - expand on this later TODO
             return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }

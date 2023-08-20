@@ -4,7 +4,6 @@ import com.example.CustomerApplication.controller.CustomerController;
 import com.example.CustomerApplication.model.Customer;
 import com.example.CustomerApplication.model.CustomerDTO;
 import com.example.CustomerApplication.repository.CustomerRepository;
-import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
