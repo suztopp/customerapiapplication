@@ -1,6 +1,7 @@
 package com.example.CustomerApplication.controller;
 
 import com.example.CustomerApplication.model.Customer;
+import com.example.CustomerApplication.model.CustomerDTO;
 import com.example.CustomerApplication.repository.CustomerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -85,8 +86,9 @@ public class CustomerController {
     }
 
     @PostMapping("/addNewCustomer")
-    public ResponseEntity<Customer> addNewCustomer(@RequestBody Customer customer) {
+    public ResponseEntity<Customer> addNewCustomer(@RequestBody CustomerDTO customerDTO) {
         try {
+            Customer customer = new Customer(customerDTO.getFirstname(), customerDTO.getLastName(), customerDTO.getBirthDate());
             Customer customerSaved = customerRepository.save(customer);
             return new ResponseEntity<>(customerSaved, HttpStatus.OK);
         } catch (Exception e) {
@@ -94,9 +96,12 @@ public class CustomerController {
         }
     }
 
-    @PostMapping("/updateCustomerById/{id}/{customerToUpdate}")
-    public ResponseEntity<Customer> updateCustomerById(@PathVariable Long id, @RequestBody Customer customerToUpdate) {
-        //retrieve existing customer - need to add error handling here - could add custom error messages if time permits?
+    @PutMapping("/updateCustomerById/{id}")
+    public ResponseEntity<Customer> updateCustomerById(@PathVariable Long id, @RequestBody CustomerDTO customerDTOToUpdate) {
+        Customer customerToUpdate = new Customer(id,
+                customerDTOToUpdate.getFirstname(),
+                customerDTOToUpdate.getLastName(),
+                customerDTOToUpdate.getBirthDate());
         try {
             Optional<Customer> customerSearched = customerRepository.findById(id);
             if (customerSearched.isPresent()) {

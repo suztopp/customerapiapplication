@@ -2,6 +2,7 @@ package com.example.CustomerApplication;
 
 import com.example.CustomerApplication.controller.CustomerController;
 import com.example.CustomerApplication.model.Customer;
+import com.example.CustomerApplication.model.CustomerDTO;
 import com.example.CustomerApplication.repository.CustomerRepository;
 import jakarta.inject.Singleton;
 import org.junit.jupiter.api.Assertions;
@@ -29,6 +30,7 @@ public class CustomerControllerTest {
     @MockBean
     private CustomerRepository repo;
 
+    CustomerDTO mockedRequestDTO = new CustomerDTO("Testing", "McTesterson", LocalDate.parse("2001-10-10"));
     Customer mockCustomer = new Customer(1L, "Testing", "McTesterson", LocalDate.parse("2001-10-10"));
     Customer mockCustomerTwo = new Customer(2L, "Adele", "Hello", LocalDate.parse("2005-12-15"));
     List<Customer> mockedList = new ArrayList<>(Arrays.asList(mockCustomer, mockCustomerTwo));
@@ -131,7 +133,7 @@ public class CustomerControllerTest {
         Mockito.when(repo.save(Mockito.any())).thenReturn(mockCustomerTwo); //returns updated new customer
         Long testId = 1L;
 
-        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockCustomer);
+        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockedRequestDTO);
         Assertions.assertEquals(HttpStatus.OK, response.getStatusCode());
         Assertions.assertEquals(mockCustomerTwo.getFirstName(), (Objects.requireNonNull(response.getBody()).getFirstName()));
     }
@@ -141,7 +143,7 @@ public class CustomerControllerTest {
         Mockito.when(repo.findById(Mockito.anyLong())).thenReturn(Optional.empty());
         Long testId = 1L;
 
-        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockCustomer);
+        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockedRequestDTO);
         Assertions.assertEquals(HttpStatus.NOT_FOUND, response.getStatusCode());
     }
 
@@ -150,7 +152,7 @@ public class CustomerControllerTest {
         Mockito.when(repo.findById(Mockito.anyLong())).thenThrow(HttpServerErrorException.InternalServerError.class);
         Long testId = 1L;
 
-        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockCustomer);
+        ResponseEntity<Customer> response = controller.updateCustomerById(testId, mockedRequestDTO);
         Assertions.assertEquals(HttpStatus.INTERNAL_SERVER_ERROR, response.getStatusCode());
     }
 
