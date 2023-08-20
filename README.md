@@ -19,7 +19,7 @@ more layers of functionality / error handling / response handling with more time
 
 You will need:
 
-Java 17
+Java 17<br>
 Maven 
 
 Once repository is cloned, it's suggested to use INTELLIJ as the IDE when running the Customer Api Application.
